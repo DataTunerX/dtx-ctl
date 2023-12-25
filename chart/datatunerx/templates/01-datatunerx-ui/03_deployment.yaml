@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.datatunerxUi.name }}
+  namespace: {{ .Values.datatunerxUi.namespace }}
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "3"
+  labels:
+    datatunerx.io/component: ui
+    datatunerx.io/part-of: datatunerx
+    {{- with .Values.datatunerxUi.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.datatunerxUi.replicas }}
+  selector:
+    matchLabels:
+      datatunerx.io/component: ui
+  template:
+    metadata:
+      labels:
+        datatunerx.io/component: ui
+    spec:
+      serviceAccountName: {{ .Values.datatunerxUi.serviceAccountName }}
+      containers:
+        - name: {{ .Values.datatunerxUi.name }}
+          image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/{{ .Values.datatunerxUi.image }}
+          env:
+            - name: 'KUBERNETES_API_SERVER'
+              value: https://kubernetes.default.svc:443
+            - name: 'DATATUNERX_API_SERVER'
+              value: http://{{ .Values.datatunerxServer.service.name }}.{{ .Values.datatunerxServer.namespace }}.svc.cluster.local/
+          imagePullPolicy: {{ .Values.datatunerxUi.imagePullPolicy }}
+          ports:
+            - containerPort: 8443
+          resources:
+            limits:
+              cpu: {{ .Values.datatunerxUi.resources.limits.cpu }}
+              memory: {{ .Values.datatunerxUi.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.datatunerxUi.resources.requests.cpu }}
+              memory: {{ .Values.datatunerxUi.resources.requests.memory }}

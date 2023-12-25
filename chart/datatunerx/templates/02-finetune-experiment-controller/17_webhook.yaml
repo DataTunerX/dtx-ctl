@@ -1,0 +1,224 @@
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: {{ .Values.finetuneExperimentController.namespace }}-mutating-webhook-configuration
+  labels:
+    datatunerx.io/part-of: datatunerx
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "17"
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /mutate-extension-datatunerx-io-v1beta1-dataset
+  failurePolicy: Fail
+  name: mdataset.kb.io
+  rules:
+  - apiGroups:
+    - extension.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - datasets
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /mutate-finetune-datatunerx-io-v1beta1-finetuneexperiment
+  failurePolicy: Fail
+  name: mfinetuneexperiment.kb.io
+  rules:
+  - apiGroups:
+    - finetune.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - finetuneexperiments
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /mutate-finetune-datatunerx-io-v1beta1-finetunejob
+  failurePolicy: Fail
+  name: mfinetunejob.kb.io
+  rules:
+  - apiGroups:
+    - finetune.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - finetunejobs
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /mutate-core-datatunerx-io-v1beta1-hyperparameter
+  failurePolicy: Fail
+  name: mhyperparameter.kb.io
+  rules:
+  - apiGroups:
+    - core.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - hyperparameters
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /mutate-core-datatunerx-io-v1beta1-llm
+  failurePolicy: Fail
+  name: mllm.kb.io
+  rules:
+  - apiGroups:
+    - core.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - llms
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: {{ .Values.finetuneExperimentController.namespace }}-validating-webhook-configuration
+  labels:
+    datatunerx.io/part-of: datatunerx
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "18"
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /validate-extension-datatunerx-io-v1beta1-dataset
+  failurePolicy: Fail
+  name: vdataset.kb.io
+  rules:
+  - apiGroups:
+    - extension.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - datasets
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /validate-finetune-datatunerx-io-v1beta1-finetuneexperiment
+  failurePolicy: Fail
+  name: vfinetuneexperiment.kb.io
+  rules:
+  - apiGroups:
+    - finetune.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - finetuneexperiments
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /validate-finetune-datatunerx-io-v1beta1-finetunejob
+  failurePolicy: Fail
+  name: vfinetunejob.kb.io
+  rules:
+  - apiGroups:
+    - finetune.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - finetunejobs
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /validate-core-datatunerx-io-v1beta1-hyperparameter
+  failurePolicy: Fail
+  name: vhyperparameter.kb.io
+  rules:
+  - apiGroups:
+    - core.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - hyperparameters
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ .Values.finetuneExperimentController.service.name }}
+      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      path: /validate-core-datatunerx-io-v1beta1-llm
+  failurePolicy: Fail
+  name: vllm.kb.io
+  rules:
+  - apiGroups:
+    - core.datatunerx.io
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - llms
+  sideEffects: None

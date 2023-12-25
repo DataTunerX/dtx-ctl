@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.dataPluginController.name }}
+  namespace: {{ .Values.dataPluginController.namespace }}
+  labels:
+    datatunerx.io/component: dataplugin
+    datatunerx.io/part-of: datatunerx
+    {{- with .Values.dataPluginController.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.dataPluginController.replicas }}
+  selector:
+    matchLabels:
+      datatunerx.io/component: dataplugin
+  template:
+    metadata:
+      labels:
+        datatunerx.io/component: dataplugin
+    spec:
+      containers:
+        - name: dataplugin
+          image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/{{ .Values.dataPluginController.image }}
+          command: ["/manager"]
+          args: ["--leader-elect"]
+          env:
+            - name: LOG_LEVEL
+              value: info
+            - name: COMPLETE_NOTIFY_URL
+              value: /apis/util.datatunerx.io/v1beta1/namespaces/
+            - name: DATUNERX_SYSTEM_NAMESPACE
+              value:  {{ .Values.finetuneExperimentController.namespace }}
+            - name: DATATUNERX_SERVER_ADDRESS
+              value: http://{{ .Values.datatunerxServer.service.name }}.{{ .Values.datatunerxServer.namespace }}.svc
+          imagePullPolicy: {{ .Values.dataPluginController.imagePullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8091
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8091
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources: {{- toYaml .Values.dataPluginController.resources | nindent 12 }}
+      serviceAccountName: {{ .Values.dataPluginController.serviceAccountName }}

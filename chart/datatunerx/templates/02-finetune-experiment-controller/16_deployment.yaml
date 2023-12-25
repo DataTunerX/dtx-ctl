@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    datatunerx.io/component: finetune-experiment
+    datatunerx.io/part-of: datatunerx
+    {{- with .Values.finetuneExperimentController.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  name: {{ .Values.finetuneExperimentController.name }}
+  namespace: {{ .Values.finetuneExperimentController.namespace }}
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "16"
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.finetuneExperimentController.replicas }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      datatunerx.io/component: finetune-experiment
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        datatunerx.io/component: finetune-experiment
+    spec:
+      containers:
+      - command:
+        - /manager
+        name: finetune-experiment
+        env:
+          - name: BASE_IMAGE
+            value: rayproject/ray271-llama2-7b-finetune:20231221
+          - name: MOUNT_PATH
+            value: /var/lib/container
+          - name: PASSWORD
+            value: dangerous
+          - name: REGISTRY_URL
+            value: 10.33.1.11:9090
+          - name: REPOSITORY_NAME
+            value: datatunerx
+          - name: S3_ACCESSKEYID
+            value: admin
+          - name: S3_BUCKET
+            value: datatunerx
+          - name: S3_ENDPOINT
+            value: 10.33.1.10:32575
+          - name: S3_SECRETACCESSKEY
+            value: dN3dz3IFd3
+          - name: S3_SECURE
+            value: "false"
+          - name: USERNAME
+            value: admin
+        image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/{{ .Values.finetuneExperimentController.image }}
+        imagePullPolicy: {{ .Values.finetuneExperimentController.imagePullPolicy }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /readyz
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: {{ .Values.finetuneExperimentController.resources.limits.cpu }}
+            memory: {{ .Values.finetuneExperimentController.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.finetuneExperimentController.resources.requests.cpu }}
+            memory: {{ .Values.finetuneExperimentController.resources.requests.memory }}
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      serviceAccountName: {{ .Values.finetuneExperimentController.serviceAccountName }}
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: {{ .Values.finetuneExperimentController.secretName }}

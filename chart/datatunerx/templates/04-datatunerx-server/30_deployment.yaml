@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.datatunerxServer.name }}
+  namespace: {{ .Values.datatunerxServer.namespace }}
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "30"
+  labels:
+    datatunerx.io/component: datatunerx-server
+    datatunerx.io/part-of: datatunerx
+    {{- with .Values.datatunerxServer.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.datatunerxServer.replicas }}
+  selector:
+    matchLabels:
+      datatunerx.io/component: datatunerx-server
+  template:
+    metadata:
+      labels:
+        datatunerx.io/component: datatunerx-server
+    spec:
+      containers:
+        - name: datatunerx-server
+          image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/{{ .Values.datatunerxServer.image }}
+          imagePullPolicy: {{ .Values.datatunerxServer.imagePullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KUBECONFIG
+              value: "/root/.kube/config"
+            - name: PROMETHEUS_API_URL
+              value: "http://10.33.1.10:30722"
+          resources:
+            limits:
+              cpu: {{ .Values.datatunerxServer.resources.limits.cpu }}
+              memory: {{ .Values.datatunerxServer.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.datatunerxServer.resources.requests.cpu }}
+              memory: {{ .Values.datatunerxServer.resources.requests.memory }}
+          volumeMounts:
+          - name: kube-config
+            mountPath: /root/.kube/config
+      volumes:
+      - name: kube-config
+        hostPath:
+          path: /root/.kube/config
