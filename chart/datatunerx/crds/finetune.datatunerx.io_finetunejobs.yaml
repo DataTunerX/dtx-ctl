@@ -1,0 +1,436 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.1
+  creationTimestamp: null
+  name: finetunejobs.finetune.datatunerx.io
+spec:
+  group: finetune.datatunerx.io
+  names:
+    kind: FinetuneJob
+    listKind: FinetuneJobList
+    plural: finetunejobs
+    singular: finetunejob
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: FinetuneJob is the Schema for the finetunejobs API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: FinetuneJobSpec defines the desired state of FinetuneJob
+            properties:
+              finetune:
+                description: Finetune cr config.
+                properties:
+                  finetuneSpec:
+                    description: FinetuneSpec defines the desired state of Finetune
+                    properties:
+                      dataset:
+                        description: Dataset specifies the dataset CR used for fine-tuning.
+                        type: string
+                      hyperparameter:
+                        description: Hyperparameter specifies the hyperparameter used
+                          for fine-tuning.
+                        properties:
+                          hyperparameterRef:
+                            description: HyperparameterRef specifies the hyperparameter
+                              CR used for fine-tuning.
+                            type: string
+                          overrides:
+                            description: Overrides is used to override some hyperparameter
+                            properties:
+                              FP16:
+                                description: FP16 indicates whether to use 16-bit
+                                  floating point precision.
+                                type: boolean
+                              PEFT:
+                                description: PEFT indicates whether to enable Performance
+                                  Evaluation and Forecasting Tool.
+                                type: boolean
+                              batchSize:
+                                description: BatchSize specifies the size of mini-batches.
+                                type: integer
+                              blockSize:
+                                description: BlockSize specifies the block size.
+                                type: integer
+                              epochs:
+                                description: Epochs specifies the number of training
+                                  epochs.
+                                type: integer
+                              gradAccSteps:
+                                description: GradAccSteps specifies the number of
+                                  gradient accumulation steps.
+                                type: integer
+                              int4:
+                                description: Int4 indicates whether to use 4-bit integer
+                                  quantization.
+                                type: boolean
+                              int8:
+                                description: Int8 indicates whether to use 8-bit integer
+                                  quantization.
+                                type: boolean
+                              learningRate:
+                                description: LearningRate specifies the initial learning
+                                  rate.
+                                type: string
+                              loRA_Alpha:
+                                description: LoRA_Alpha represents the alpha parameter
+                                  for Localized Receptive Attention.
+                                type: string
+                              loRA_Dropout:
+                                description: LoRA_Dropout specifies the dropout rate
+                                  for Localized Receptive Attention.
+                                type: string
+                              loRA_R:
+                                description: LoRA_R represents the radius parameter
+                                  for Localized Receptive Attention.
+                                type: string
+                              optimizer:
+                                description: Optimizer specifies the optimization
+                                  algorithm.
+                                enum:
+                                - AdamW
+                                - Adam
+                                - SGD
+                                type: string
+                              scheduler:
+                                description: Scheduler specifies the learning rate
+                                  scheduler.
+                                enum:
+                                - Cosine
+                                - Linear
+                                - Constant
+                                type: string
+                              trainerType:
+                                description: TrainerType specifies the type of trainer
+                                  to use.
+                                enum:
+                                - Standard
+                                type: string
+                              warmupRatio:
+                                description: WarmupRatio specifies the ratio of warmup
+                                  steps.
+                                type: string
+                              weightDecay:
+                                description: WeightDecay specifies the weight decay
+                                  factor.
+                                type: string
+                            type: object
+                        required:
+                        - hyperparameterRef
+                        type: object
+                      image:
+                        properties:
+                          imagePullPolicy:
+                            default: IfNotPresent
+                            description: ImagePullPolicy describes a policy for if/when
+                              to pull a container image.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            - Never
+                            type: string
+                          name:
+                            description: Name describe the image name.
+                            type: string
+                          path:
+                            description: Path description of the model file path.
+                            type: string
+                        type: object
+                      llm:
+                        description: LLM specifies the large model CR used for fine-tuning.
+                        type: string
+                      node:
+                        minimum: 1
+                        type: integer
+                      resource:
+                        description: Resource specifies the resource configuration
+                          for fine-tuning.
+                        properties:
+                          limits:
+                            description: Limits specifies the resource limits.
+                            properties:
+                              cpu:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                description: CPU specifies the CPU resource limit.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              gpu:
+                                default: "1"
+                                description: GPU specifies the GPU resource limit.
+                                type: string
+                              memory:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                description: Memory specifies the memory resource
+                                  limit.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                            required:
+                            - cpu
+                            - gpu
+                            - memory
+                            type: object
+                          requests:
+                            description: ResourceLimits represents the resource limits
+                              for a task.
+                            properties:
+                              cpu:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                description: CPU specifies the CPU resource limit.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              gpu:
+                                default: "1"
+                                description: GPU specifies the GPU resource limit.
+                                type: string
+                              memory:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                description: Memory specifies the memory resource
+                                  limit.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                            required:
+                            - cpu
+                            - gpu
+                            - memory
+                            type: object
+                        required:
+                        - limits
+                        - requests
+                        type: object
+                    required:
+                    - dataset
+                    - hyperparameter
+                    - llm
+                    type: object
+                  name:
+                    type: string
+                required:
+                - finetuneSpec
+                type: object
+              scoringPluginConfig:
+                description: Score plugin config.
+                properties:
+                  name:
+                    description: Name specifies the name of the scoring CR.
+                    type: string
+                  parameters:
+                    type: string
+                type: object
+              serveConfig:
+                description: Serve config.
+                properties:
+                  nodeSelector:
+                    additionalProperties:
+                      type: string
+                    description: NodeSelector specifies the node where service will
+                      be deployed.
+                    type: object
+                  tolerations:
+                    description: Tolerations specifies the tolerations for service.
+                    items:
+                      description: The pod this Toleration is attached to tolerates
+                        any taint that matches the triple <key,value,effect> using
+                        the matching operator <operator>.
+                      properties:
+                        effect:
+                          description: Effect indicates the taint effect to match.
+                            Empty means match all taint effects. When specified, allowed
+                            values are NoSchedule, PreferNoSchedule and NoExecute.
+                          type: string
+                        key:
+                          description: Key is the taint key that the toleration applies
+                            to. Empty means match all taint keys. If the key is empty,
+                            operator must be Exists; this combination means to match
+                            all values and all keys.
+                          type: string
+                        operator:
+                          description: Operator represents a key's relationship to
+                            the value. Valid operators are Exists and Equal. Defaults
+                            to Equal. Exists is equivalent to wildcard for value,
+                            so that a pod can tolerate all taints of a particular
+                            category.
+                          type: string
+                        tolerationSeconds:
+                          description: TolerationSeconds represents the period of
+                            time the toleration (which must be of effect NoExecute,
+                            otherwise this field is ignored) tolerates the taint.
+                            By default, it is not set, which means tolerate the taint
+                            forever (do not evict). Zero and negative values will
+                            be treated as 0 (evict immediately) by the system.
+                          format: int64
+                          type: integer
+                        value:
+                          description: Value is the taint value the toleration matches
+                            to. If the operator is Exists, the value should be empty,
+                            otherwise just a regular string.
+                          type: string
+                      type: object
+                    type: array
+                type: object
+            required:
+            - finetune
+            type: object
+          status:
+            description: FinetuneJobStatus defines the observed state of FinetuneJob
+            properties:
+              conditions:
+                items:
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource. --- This struct is intended for direct
+                    use as an array at the field path .status.conditions.  For example,
+                    \n type FooStatus struct{ // Represents the observations of a
+                    foo's current state. // Known .status.conditions.type are: \"Available\",
+                    \"Progressing\", and \"Degraded\" // +patchMergeKey=type // +patchStrategy=merge
+                    // +listType=map // +listMapKey=type Conditions []metav1.Condition
+                    `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\"
+                    protobuf:\"bytes,1,rep,name=conditions\"` \n // other fields }"
+                  properties:
+                    lastTransitionTime:
+                      description: lastTransitionTime is the last time the condition
+                        transitioned from one status to another. This should be when
+                        the underlying condition changed.  If that is not known, then
+                        using the time when the API field changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: message is a human readable message indicating
+                        details about the transition. This may be an empty string.
+                      maxLength: 32768
+                      type: string
+                    observedGeneration:
+                      description: observedGeneration represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.conditions[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      minimum: 0
+                      type: integer
+                    reason:
+                      description: reason contains a programmatic identifier indicating
+                        the reason for the condition's last transition. Producers
+                        of specific condition types may define expected values and
+                        meanings for this field, and whether the values are considered
+                        a guaranteed API. The value should be a CamelCase string.
+                        This field may not be empty.
+                      maxLength: 1024
+                      minLength: 1
+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                      type: string
+                    status:
+                      description: status of the condition, one of True, False, Unknown.
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                      type: string
+                    type:
+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                        --- Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                      maxLength: 316
+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              finetuneStatus:
+                description: FinetuneStatus defines the observed state of Finetune
+                properties:
+                  llmCheckpoint:
+                    description: LLMCheckpoint describes the llmcheckpoint.
+                    properties:
+                      checkpointPath:
+                        type: string
+                      llmCheckpointRef:
+                        type: string
+                    required:
+                    - checkpointPath
+                    - llmCheckpointRef
+                    type: object
+                  rayJobInfo:
+                    description: RayJobInfo describes the rayjob.
+                    properties:
+                      rayJobPodContainerName:
+                        type: string
+                      rayJobPodName:
+                        type: string
+                    type: object
+                  state:
+                    enum:
+                    - INIT
+                    - PENDING
+                    - RUNNING
+                    - FAILED
+                    - SUCCESSFUL
+                    type: string
+                required:
+                - state
+                type: object
+              result:
+                properties:
+                  dashboard:
+                    type: string
+                  image:
+                    type: string
+                  modelExportResult:
+                    type: boolean
+                  score:
+                    type: string
+                  serve:
+                    type: string
+                required:
+                - modelExportResult
+                type: object
+              state:
+                default: INIT
+                enum:
+                - INIT
+                - FAILED
+                - SUCCESSFUL
+                - BUILDIMAGE
+                - FINETUNE
+                - SERVE
+                type: string
+              stats:
+                type: string
+            required:
+            - state
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

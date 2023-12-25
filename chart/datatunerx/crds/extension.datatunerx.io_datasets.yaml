@@ -1,0 +1,230 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.1
+  creationTimestamp: null
+  name: datasets.extension.datatunerx.io
+spec:
+  group: extension.datatunerx.io
+  names:
+    kind: Dataset
+    listKind: DatasetList
+    plural: datasets
+    singular: dataset
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: Dataset is the Schema for the datasets API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: DatasetSpec defines the desired state of Dataset
+            properties:
+              datasetCard:
+                description: DatasetCard contains a dataset's README reference.
+                properties:
+                  datasetCardRef:
+                    type: string
+                type: object
+              datasetFiles:
+                description: DatasetFiles describes a dataset source address.
+                properties:
+                  source:
+                    type: string
+                type: object
+              datasetMetadata:
+                description: DatasetMetadata contains a dataset's Language, Tags,
+                  Size, License, Task, Plugin, and baseinfo
+                properties:
+                  datasetInfo:
+                    description: DatasetInfo describes a dataset's subsets and Features.
+                    properties:
+                      features:
+                        items:
+                          description: Feature defines a dataset's column name as
+                            a feature and its data type and relationship to finetune
+                            feature fields
+                          properties:
+                            dataType:
+                              default: string
+                              type: string
+                            mapTo:
+                              description: MapTo describes the dataste feature field
+                                mapping to instruction or response.
+                              maxLength: 63
+                              type: string
+                            name:
+                              enum:
+                              - instruction
+                              - response
+                              type: string
+                          required:
+                          - mapTo
+                          - name
+                          type: object
+                        type: array
+                      subsets:
+                        items:
+                          description: Subset defines a dataset‘s subset
+                          properties:
+                            name:
+                              description: Subset e.g. Random Sample Subset, Balanced
+                                Class Subset, Time Window Subset, Feature Subset,
+                                Cross-Validation Subset, Outlier Detection Subset
+                                etc.
+                              maxLength: 63
+                              type: string
+                            splits:
+                              description: Splits describes subsets of training and
+                                testing and validation data splits
+                              properties:
+                                test:
+                                  description: Test defines a dataset's subsets' test-splits
+                                    file address
+                                  properties:
+                                    file:
+                                      type: string
+                                  type: object
+                                train:
+                                  description: Train defines a dataset's subsets'
+                                    train-splits file address
+                                  properties:
+                                    file:
+                                      type: string
+                                  required:
+                                  - file
+                                  type: object
+                                validate:
+                                  description: Validate defines a dataset's subsets'
+                                    validate-splits file address
+                                  properties:
+                                    file:
+                                      type: string
+                                  type: object
+                              type: object
+                          type: object
+                        type: array
+                    type: object
+                  languages:
+                    description: Languages includes Chinese and English and etc.
+                    items:
+                      type: string
+                    type: array
+                  license:
+                    description: License includes CC BY, CC BY-SA, CC BY-ND, CC BY-NC,
+                      CC BY-NC-SA, CC BY-NC-ND, CC0, ODC-PDDL, ODC-BY ODC-ODbl, CDLA-Permissive-2.0,
+                      CDLA-Sharing-1.0
+                    type: string
+                  plugin:
+                    description: Plugin describes the plugin including parameters
+                      and whether uses a plugin.
+                    properties:
+                      loadPlugin:
+                        default: false
+                        description: LoadPlugin describes a Scoring CR whether uses
+                          plugin to do evaluation, if true then Plugin data will be
+                          needed,
+                        type: boolean
+                      name:
+                        maxLength: 63
+                        type: string
+                      parameters:
+                        type: string
+                    required:
+                    - loadPlugin
+                    type: object
+                  size:
+                    description: Size describes dataset's entries number
+                    type: string
+                  tags:
+                    description: Tags describes a dataset, it's customized.
+                    items:
+                      type: string
+                    type: array
+                  task:
+                    description: Task describes the main task that the dataset can
+                      do, including Text Generation, Question Answering, Translation,
+                      Conversational etc.
+                    properties:
+                      name:
+                        enum:
+                        - Text Generation
+                        - Question Answering
+                        - Text Classification
+                        - Summarization
+                        maxLength: 63
+                        type: string
+                      subTasks:
+                        description: SubTask defines a dataset task's subtask e.g.
+                          language-modeling of Text Generation, open-domain-qa of
+                          Question Answering etc. It is corresponding to Task.
+                        items:
+                          description: SubTask defines a dataset task's subtask
+                          properties:
+                            name:
+                              enum:
+                              - language-modeling
+                              - masked-language-modeling
+                              - natural-language-inference
+                              - extractive-qa
+                              - open-domain-qa
+                              - multi-choice-qa
+                              - closed-domain-qa
+                              - multi-class-classification
+                              - sentiment-classification
+                              - topic-classification
+                              - multi-label-classification
+                              - news-articles-summarization
+                              maxLength: 63
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        type: array
+                    required:
+                    - name
+                    type: object
+                required:
+                - languages
+                - size
+                - task
+                type: object
+            required:
+            - datasetMetadata
+            type: object
+          status:
+            description: DatasetStatus defines the observed state of Dataset
+            properties:
+              referenceFinetuneName:
+                items:
+                  type: string
+                type: array
+              state:
+                description: DatasetState is an enum type for the State field
+                enum:
+                - READY
+                - UNREADY
+                type: string
+            required:
+            - referenceFinetuneName
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

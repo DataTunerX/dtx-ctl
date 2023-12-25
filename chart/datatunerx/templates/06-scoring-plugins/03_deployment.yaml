@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.scoringPluginController.name }}
+  namespace: {{ .Values.scoringPluginController.namespace }}
+  labels:
+    datatunerx.io/component: scoringplugin
+    datatunerx.io/part-of: datatunerx
+    {{- with .Values.scoringPluginController.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.scoringPluginController.replicas }}
+  selector:
+    matchLabels:
+      datatunerx.io/component: scoringplugin
+  template:
+    metadata:
+      labels:
+        datatunerx.io/component: scoringplugin
+    spec:
+      containers:
+        - name: scoringplugin
+          image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/{{ .Values.scoringPluginController.image }}
+          command: ["/manager"]
+          args: ["--leader-elect"]
+          env:
+            - name: LOG_LEVEL
+              value: info
+            - name: COMPLETE_NOTIFY_URL
+              value: /apis/util.datatunerx.io/v1beta1/namespaces/
+            - name: DATUNERX_SYSTEM_NAMESPACE
+              value: {{ .Values.finetuneExperimentController.namespace }}
+            - name: IN_TREE_SCORING_IMAGE
+              value: 10.33.1.11:9090/datatunerx/in-tree-scoring:20231219
+            - name: DATATUNERX_SERVER_ADDRESS
+              value: http://{{ .Values.datatunerxServer.service.name }}.{{ .Values.datatunerxServer.namespace }}.svc
+          imagePullPolicy: {{ .Values.scoringPluginController.imagePullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8091
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8091
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources: {{- toYaml .Values.scoringPluginController.resources | nindent 12 }}
+      serviceAccountName: {{ .Values.scoringPluginController.serviceAccountName }}

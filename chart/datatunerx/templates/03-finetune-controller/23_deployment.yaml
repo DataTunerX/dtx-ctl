@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.finetuneController.name }}
+  namespace: {{ .Values.finetuneController.namespace }}
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "23"
+  labels:
+    datatunerx.io/component: finetune
+    datatunerx.io/part-of: datatunerx
+spec:
+  selector:
+    matchLabels:
+      datatunerx.io/component: finetune
+  replicas: {{ .Values.finetuneController.replicas }}
+  template:
+    metadata:
+      labels:
+        datatunerx.io/component: finetune
+    spec:
+      containers:
+        - command:
+            - /manager
+          args:
+            - --leader-elect
+          env:
+            - name: LOG_LEVEL
+              value: {{ .Values.finetuneController.env.LOG_LEVEL }}
+            - name: METRICS_EXPORT_ADDRESS
+              value: {{ .Values.finetuneController.env.METRICS_EXPORT_ADDRESS }}
+            - name: STORAGE_PATH
+              value: {{ .Values.finetuneController.env.STORAGE_PATH }}
+          image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/{{ .Values.finetuneController.image }}
+          imagePullPolicy: {{ .Values.finetuneController.imagePullPolicy }}
+          name: finetune
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: {{ .Values.finetuneController.resources.limits.cpu }}
+              memory: {{ .Values.finetuneController.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.finetuneController.resources.requests.cpu }}
+              memory: {{ .Values.finetuneController.resources.requests.memory }}
+      serviceAccountName: {{ .Values.finetuneController.serviceAccountName }}
+      terminationGracePeriodSeconds: 10

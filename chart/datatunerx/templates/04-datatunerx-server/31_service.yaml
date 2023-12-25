@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.datatunerxServer.service.name }}
+  namespace: {{ .Values.datatunerxServer.namespace }}
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "31"
+  labels:
+    datatunerx.io/component: datatunerx-server
+    datatunerx.io/part-of: datatunerx
+    {{- with .Values.datatunerxServer.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    datatunerx.io/component: datatunerx-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: {{ .Values.datatunerxServer.service.type }}

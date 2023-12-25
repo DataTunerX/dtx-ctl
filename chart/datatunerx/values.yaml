@@ -1,0 +1,124 @@
+kuberay:
+  enabled: false
+minio:
+  enabled: false
+
+global:
+  registry: "10.33.1.11:9090"
+  repository: "datatunerx"
+  imagePullSecret: ""
+  imagePullPolicy: Always
+
+
+datatunerxUi:
+  name: datatunerx-ui
+  namespace: datatunerx-dev
+  replicas: 1
+  image: datatunerx-ui:v0.0.1-dev-874dbe2
+  apiUrl: https://kubernetes.default.svc:443
+  labels:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 0.5Gi
+    requests:
+      cpu: 500m
+      memory: 0.5Gi
+  service:
+    name: datatunerx-ui
+    type: NodePort
+
+  serviceAccountName: datatunerx-ui
+  clusterRoleBindingName: datatunerx-ui-binding
+
+finetuneController:
+  namespace: datatunerx-dev
+  clusterRoleName: datatunerx-finetune-role
+  clusterRoleBindingName: datatunerx-finetune-binding
+  serviceAccountName: datatunerx-finetune
+  name: datatunerx-finetune
+  replicas: 1
+  image: finetune-controller:v0.0.1
+  env:
+    LOG_LEVEL: DEBUG
+    METRICS_EXPORT_ADDRESS: http://10.33.1.10:30722
+    STORAGE_PATH: s3://datatunerx/tuning?endpoint_override=http://10.33.1.10:32575
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+finetuneExperimentController:
+  labels:
+  namespace: datatunerx-dev
+  clusterRoleName: finetune-experiment-role
+  clusterRoleBindingName: finetune-experiment-binding
+  serviceAccountName: finetune-experiment
+  secretName: datatunerx-cert
+  mutatingWebhookConfigurationName: datatunerx-mutating-webhook-configuration
+  validatingWebhookConfigurationName: datatunerx-validating-webhook-configuration
+  name: datatunerx-finetune-experiment
+  replicas: 1
+  image: finetune-experiment-controller:v0.0.1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+  service:
+    name: finetune-experiment
+
+scoringPluginController:
+  namespace: datatunerx-dev
+  serviceAccountName: datatunerx-scoringplugin
+  clusterRoleBindingName: datatunerx-scoringplugin-binding
+  name: datatunerx-scoringplugin
+  labels:
+  replicas: 1
+  image: scoringplugin-controller:v0.0.1-5
+  resources:
+    limits:
+      cpu: 200m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+
+dataPluginController:
+  namespace: datatunerx-dev
+  serviceAccountName: datatunerx-dataplugin
+  clusterRoleBindingName: datatunerx-dataplugin-binding
+  name: datatunerx-dataplugin
+  labels:
+  replicas: 1
+  image: dataplugin-controller:v0.0.1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+
+
+datatunerxServer:
+  namespace: datatunerx-dev
+  name: datatunerx-server
+  replicas: 1
+  image: datatunerx-server:20231220
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: "2000m"
+    requests:
+      memory: "256Mi"
+      cpu: "1000m"
+
+  service:
+    name: datatunerx-server
+    type: ClusterIP
