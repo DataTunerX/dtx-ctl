@@ -80,7 +80,7 @@ scoringPluginController:
   name: datatunerx-scoringplugin
   labels:
   replicas: 1
-  image: scoringplugin-controller:v0.0.1-5
+  image: scoringplugin-controller:v0.0.1
   resources:
     limits:
       cpu: 200m
@@ -110,7 +110,7 @@ datatunerxServer:
   namespace: datatunerx-dev
   name: datatunerx-server
   replicas: 1
-  image: datatunerx-server:20231220
+  image: datatunerx-server:v0.0.1
   resources:
     limits:
       memory: "512Mi"
