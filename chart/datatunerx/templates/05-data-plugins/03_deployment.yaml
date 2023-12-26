@@ -31,8 +31,8 @@ spec:
               value: /apis/util.datatunerx.io/v1beta1/namespaces/
             - name: DATUNERX_SYSTEM_NAMESPACE
               value:  {{ .Values.finetuneExperimentController.namespace }}
-            - name: DATATUNERX_SERVER_ADDRESS
-              value: http://{{ .Values.datatunerxServer.service.name }}.{{ .Values.datatunerxServer.namespace }}.svc
+            - name: DATATUNERX_SERVER_NAME
+              value: {{ .Values.datatunerxServer.service.name }}
           imagePullPolicy: {{ .Values.dataPluginController.imagePullPolicy }}
           livenessProbe:
             httpGet:
