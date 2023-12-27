@@ -37,13 +37,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 8091
+              port: 8081
             initialDelaySeconds: 15
             periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /readyz
-              port: 8091
+              port: 8081
             initialDelaySeconds: 5
             periodSeconds: 10
           resources: {{- toYaml .Values.dataPluginController.resources | nindent 12 }}
