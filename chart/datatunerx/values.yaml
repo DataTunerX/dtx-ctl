@@ -62,6 +62,10 @@ finetuneExperimentController:
   validatingWebhookConfigurationName: datatunerx-validating-webhook-configuration
   name: datatunerx-finetune-experiment
   replicas: 1
+  environment:
+    baseImage: rayproject/ray271-llama2-7b-finetune:20231226
+    mountPath: /var/lib/container
+
   image: finetune-experiment-controller:v0.0.1
   resources:
     limits:
@@ -122,3 +126,17 @@ datatunerxServer:
   service:
     name: datatunerx-server
     type: ClusterIP
+
+
+s3:
+  accessKeyId: admin
+  bucket: datatunerx
+  endpoint: 10.33.1.10:32575
+  secretAccessKey: dN3dz3IFd3
+  secure: "false"
+
+registry:
+  registryUrl: 10.33.1.11:9090
+  repositoryName: datatunerx
+  userName: admin
+  password: dangerous

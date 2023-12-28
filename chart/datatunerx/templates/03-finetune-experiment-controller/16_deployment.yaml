@@ -35,27 +35,27 @@ spec:
         name: finetune-experiment
         env:
           - name: BASE_IMAGE
-            value: rayproject/ray271-llama2-7b-finetune:20231221
+            value: {{ .Values.finetuneExperimentController.environment.baseImage }}
           - name: MOUNT_PATH
-            value: /var/lib/container
+            value: {{ .Values.finetuneExperimentController.environment.mountPath }}
           - name: PASSWORD
-            value: dangerous
+            value: {{ .Values.registry.password }}
           - name: REGISTRY_URL
-            value: 10.33.1.11:9090
+            value: {{ .Values.registry.registryUrl }}
           - name: REPOSITORY_NAME
-            value: datatunerx
+            value: {{ .Values.registry.repositoryName }}
           - name: S3_ACCESSKEYID
-            value: admin
+            value: {{ .Values.s3.accessKeyId }}
           - name: S3_BUCKET
-            value: datatunerx
+            value: {{ .Values.s3.bucket }}
           - name: S3_ENDPOINT
-            value: 10.33.1.10:32575
+            value: {{ .Values.s3.endpoint }}
           - name: S3_SECRETACCESSKEY
-            value: dN3dz3IFd3
+            value: {{ .Values.s3.secretAccessKey }}
           - name: S3_SECURE
-            value: "false"
+            value: {{ .Values.s3.secure }}
           - name: USERNAME
-            value: admin
+            value: {{ .Values.registry.userName }}
         image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/{{ .Values.finetuneExperimentController.image }}
         imagePullPolicy: {{ .Values.finetuneExperimentController.imagePullPolicy }}
         livenessProbe:
