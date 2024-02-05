@@ -31,42 +31,24 @@ datatunerxUi:
   serviceAccountName: datatunerx-ui
   clusterRoleBindingName: datatunerx-ui-binding
 
-finetuneController:
-  namespace: datatunerx-dev
-  clusterRoleName: datatunerx-finetune-role
-  clusterRoleBindingName: datatunerx-finetune-binding
-  serviceAccountName: datatunerx-finetune
-  name: datatunerx-finetune
-  replicas: 1
-  image: finetune-controller:v0.0.1
-  env:
-    LOG_LEVEL: DEBUG
-    METRICS_EXPORT_ADDRESS: http://10.33.1.10:30722
-    STORAGE_PATH: s3://datatunerx/tuning?endpoint_override=http://10.33.1.10:32575
-  resources:
-    limits:
-      cpu: 500m
-      memory: 128Mi
-    requests:
-      cpu: 10m
-      memory: 64Mi
-
 finetuneExperimentController:
   labels:
   namespace: datatunerx-dev
-  clusterRoleName: finetune-experiment-role
-  clusterRoleBindingName: finetune-experiment-binding
-  serviceAccountName: finetune-experiment
+  clusterRoleName: datatunerx-role
+  clusterRoleBindingName: datatunerx-binding
+  serviceAccountName: datatunerx
   secretName: datatunerx-cert
   mutatingWebhookConfigurationName: datatunerx-mutating-webhook-configuration
   validatingWebhookConfigurationName: datatunerx-validating-webhook-configuration
-  name: datatunerx-finetune-experiment
+  name: datatunerx
   replicas: 1
   environment:
     baseImage: rayproject/ray271-llama2-7b-finetune:20231226
     mountPath: /var/lib/container
+    metricsExportAddress: "http://10.33.1.10:30722"
+    storagePath: "s3://datatunerx/tuning?endpoint_override=http://10.33.1.10:32575"
 
-  image: finetune-experiment-controller:v0.0.1
+  image: datatunerx:v0.0.1
   resources:
     limits:
       cpu: 500m
@@ -75,7 +57,7 @@ finetuneExperimentController:
       cpu: 10m
       memory: 64Mi
   service:
-    name: finetune-experiment
+    name: datatunerx
 
 scoringPluginController:
   namespace: datatunerx-dev

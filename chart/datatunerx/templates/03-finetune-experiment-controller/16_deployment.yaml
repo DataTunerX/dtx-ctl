@@ -53,9 +53,13 @@ spec:
           - name: S3_SECRETACCESSKEY
             value: {{ .Values.s3.secretAccessKey }}
           - name: S3_SECURE
-            value: {{ .Values.s3.secure }}
+            value: {{ .Values.s3.secure | quote }}
           - name: USERNAME
             value: {{ .Values.registry.userName }}
+          - name: METRICS_EXPORT_ADDRESS
+            value: {{ .Values.finetuneExperimentController.environment.metricsExportAddress }}
+          - name: STORAGE_PATH
+            value: {{ .Values.finetuneExperimentController.environment.storagePath }}
         image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/{{ .Values.finetuneExperimentController.image }}
         imagePullPolicy: {{ .Values.finetuneExperimentController.imagePullPolicy }}
         livenessProbe:

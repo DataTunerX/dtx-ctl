@@ -24,6 +24,7 @@ rules:
   - ray.io
   resources:
   - rayservices
+  - rayjobs
   verbs:
   - create
   - delete
@@ -36,17 +37,13 @@ rules:
   - ray.io
   resources:
   - rayservices/status
+  - rayjobs/status
   verbs:
   - get
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
-  verbs:
-  - '*'
-- apiGroups:
-  - admissionregistration.k8s.io
-  resources:
   - validatingwebhookconfigurations
   verbs:
   - '*'
@@ -54,6 +51,7 @@ rules:
   - ""
   resources:
   - secrets
+  - pods
   verbs:
   - create
   - get
@@ -61,6 +59,12 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
 - apiGroups:
   - batch
   resources:
@@ -88,117 +92,7 @@ rules:
   - finetune.datatunerx.io
   resources:
   - finetuneexperiments
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - finetune.datatunerx.io
-  resources:
-  - finetuneexperiments/status
-  verbs:
-  - get
-  - update
-- apiGroups:
-  - finetune.datatunerx.io
-  resources:
   - finetunejobs
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - finetune.datatunerx.io
-  resources:
-  - finetunejobs/status
-  verbs:
-  - get
-  - update
-- apiGroups:
-  - extension.datatunerx.io
-  resources:
-  - scorings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - extension.datatunerx.io
-  resources:
-  - scorings/status
-  verbs:
-  - get
-- apiGroups:
-  - core.datatunerx.io
-  resources:
-  - llmcheckpoints
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - core.datatunerx.io
-  resources:
-  - llmcheckpoints/status
-  verbs:
-  - get
-- apiGroups:
-  - core.datatunerx.io
-  resources:
-  - hyperparameters
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - core.datatunerx.io
-  resources:
-  - hyperparameters/status
-  verbs:
-  - get
-  - update
-- apiGroups:
-  - core.datatunerx.io
-  resources:
-  - llms
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - core.datatunerx.io
-  resources:
-  - llms/status
-  verbs:
-  - get
-  - update
-- apiGroups:
-  - finetune.datatunerx.io
-  resources:
   - finetunes
   verbs:
   - create
@@ -211,12 +105,16 @@ rules:
 - apiGroups:
   - finetune.datatunerx.io
   resources:
+  - finetuneexperiments/status
+  - finetunejobs/status
   - finetunes/status
   verbs:
   - get
+  - update
 - apiGroups:
   - extension.datatunerx.io
   resources:
+  - scorings
   - datasets
   verbs:
   - create
@@ -229,7 +127,31 @@ rules:
 - apiGroups:
   - extension.datatunerx.io
   resources:
+  - scorings/status
   - datasets/status
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - core.datatunerx.io
+  resources:
+  - llmcheckpoints
+  - hyperparameters
+  - llms
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.datatunerx.io
+  resources:
+  - llmcheckpoints/status
+  - hyperparameters/status
+  - llms/status
   verbs:
   - get
   - update
