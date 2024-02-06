@@ -43,7 +43,7 @@ finetuneExperimentController:
   name: datatunerx
   replicas: 1
   environment:
-    baseImage: rayproject/ray271-llama2-7b-finetune:20231226
+    baseImage: rayproject/ray271-llama2-7b-finetune:20231221
     mountPath: /var/lib/container
     metricsExportAddress: "http://10.33.1.10:30722"
     storagePath: "s3://datatunerx/tuning?endpoint_override=http://10.33.1.10:32575"
