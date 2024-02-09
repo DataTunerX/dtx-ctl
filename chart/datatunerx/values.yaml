@@ -4,7 +4,7 @@ minio:
   enabled: false
 
 global:
-  registry: "10.33.1.11:9090"
+  registry: "docker.io"
   repository: "datatunerx"
   imagePullSecret: ""
   imagePullPolicy: Always
@@ -14,7 +14,7 @@ datatunerxUi:
   name: datatunerx-ui
   namespace: datatunerx-dev
   replicas: 1
-  image: datatunerx-ui:v0.0.1-dev-874dbe2
+  image: datatunerx-ui:v0.1.0
   apiUrl: https://kubernetes.default.svc:443
   labels:
   resources:
@@ -43,12 +43,12 @@ finetuneExperimentController:
   name: datatunerx
   replicas: 1
   environment:
-    baseImage: rayproject/ray271-llama2-7b-finetune:20231221
+    baseImage: datatunerx/ray271-llama2-7b-finetune:v0.1.0
     mountPath: /var/lib/container
     metricsExportAddress: "http://10.33.1.10:30722"
     storagePath: "s3://datatunerx/tuning?endpoint_override=http://10.33.1.10:32575"
 
-  image: datatunerx:v0.0.1
+  image: datatunerx:v0.1.0
   resources:
     limits:
       cpu: 500m
@@ -66,7 +66,7 @@ scoringPluginController:
   name: datatunerx-scoringplugin
   labels:
   replicas: 1
-  image: scoringplugin-controller:v0.0.1
+  image: scoringplugin-controller:v0.1.0
   resources:
     limits:
       cpu: 200m
@@ -82,7 +82,7 @@ dataPluginController:
   name: datatunerx-dataplugin
   labels:
   replicas: 1
-  image: dataplugin-controller:v0.0.1
+  image: dataplugin-controller:v0.1.0
   resources:
     limits:
       cpu: 200m
@@ -96,7 +96,7 @@ datatunerxServer:
   namespace: datatunerx-dev
   name: datatunerx-server
   replicas: 1
-  image: datatunerx-server:v0.0.1
+  image: datatunerx-server:v0.1.0
   resources:
     limits:
       memory: "512Mi"
