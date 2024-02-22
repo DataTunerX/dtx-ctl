@@ -11,4 +11,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.dataPluginController.serviceAccountName }}
-  namespace: {{ .Values.dataPluginController.namespace }}
+  namespace: {{ .Release.Namespace }}

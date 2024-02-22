@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.datatunerxUi.name }}
-  namespace: {{ .Values.datatunerxUi.namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": "pre-install,pre-upgrade"
     "helm.sh/hook-weight": "5"
@@ -30,7 +30,7 @@ spec:
             - name: 'KUBERNETES_API_SERVER'
               value: https://kubernetes.default.svc:443
             - name: 'DATATUNERX_API_SERVER'
-              value: http://{{ .Values.datatunerxServer.service.name }}.{{ .Values.datatunerxServer.namespace }}.svc.cluster.local/
+              value: http://{{ .Values.datatunerxServer.service.name }}.{{ .Release.Namespace }}.svc.cluster.local/
           imagePullPolicy: {{ .Values.datatunerxUi.imagePullPolicy }}
           ports:
             - containerPort: 8443

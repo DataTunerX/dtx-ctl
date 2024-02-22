@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.dataPluginController.name }}
-  namespace: {{ .Values.dataPluginController.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     datatunerx.io/component: dataplugin
     datatunerx.io/part-of: datatunerx
@@ -30,7 +30,7 @@ spec:
             - name: COMPLETE_NOTIFY_URL
               value: /apis/util.datatunerx.io/v1beta1/namespaces/
             - name: DATUNERX_SYSTEM_NAMESPACE
-              value:  {{ .Values.finetuneExperimentController.namespace }}
+              value:  {{ .Release.Namespace }}
             - name: DATATUNERX_SERVER_NAME
               value: {{ .Values.datatunerxServer.service.name }}
           imagePullPolicy: {{ .Values.dataPluginController.imagePullPolicy }}

@@ -3,6 +3,8 @@ kuberay:
 minio:
   enabled: false
 
+namespace: datatunerx
+
 global:
   registry: "docker.io"
   repository: "datatunerx"
@@ -12,7 +14,6 @@ global:
 
 datatunerxUi:
   name: datatunerx-ui
-  namespace: datatunerx-dev
   replicas: 1
   image: datatunerx-ui:v0.1.0
   apiUrl: https://kubernetes.default.svc:443
@@ -33,7 +34,6 @@ datatunerxUi:
 
 finetuneExperimentController:
   labels:
-  namespace: datatunerx-dev
   clusterRoleName: datatunerx-role
   clusterRoleBindingName: datatunerx-binding
   serviceAccountName: datatunerx
@@ -60,7 +60,6 @@ finetuneExperimentController:
     name: datatunerx
 
 scoringPluginController:
-  namespace: datatunerx-dev
   serviceAccountName: datatunerx-scoringplugin
   clusterRoleBindingName: datatunerx-scoringplugin-binding
   name: datatunerx-scoringplugin
@@ -76,7 +75,6 @@ scoringPluginController:
       memory: 64Mi
 
 dataPluginController:
-  namespace: datatunerx-dev
   serviceAccountName: datatunerx-dataplugin
   clusterRoleBindingName: datatunerx-dataplugin-binding
   name: datatunerx-dataplugin
@@ -93,7 +91,6 @@ dataPluginController:
 
 
 datatunerxServer:
-  namespace: datatunerx-dev
   name: datatunerx-server
   replicas: 1
   image: datatunerx-server:v0.1.0
