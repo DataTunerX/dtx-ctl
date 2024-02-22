@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.datatunerxUi.service.name }}
-  namespace: {{ .Values.datatunerxUi.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     datatunerx.io/component: ui
     datatunerx.io/part-of: datatunerx

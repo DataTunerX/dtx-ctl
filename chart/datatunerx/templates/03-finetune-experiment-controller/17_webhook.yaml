@@ -3,7 +3,7 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   creationTimestamp: null
-  name: {{ .Values.finetuneExperimentController.namespace }}-mutating-webhook-configuration
+  name: {{ .Release.Namespace }}-mutating-webhook-configuration
   labels:
     datatunerx.io/part-of: datatunerx
   annotations:
@@ -15,7 +15,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /mutate-extension-datatunerx-io-v1beta1-dataset
   failurePolicy: Fail
   name: mdataset.kb.io
@@ -35,7 +35,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /mutate-finetune-datatunerx-io-v1beta1-finetuneexperiment
   failurePolicy: Fail
   name: mfinetuneexperiment.kb.io
@@ -55,7 +55,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /mutate-finetune-datatunerx-io-v1beta1-finetunejob
   failurePolicy: Fail
   name: mfinetunejob.kb.io
@@ -75,7 +75,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /mutate-core-datatunerx-io-v1beta1-hyperparameter
   failurePolicy: Fail
   name: mhyperparameter.kb.io
@@ -95,7 +95,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /mutate-core-datatunerx-io-v1beta1-llm
   failurePolicy: Fail
   name: mllm.kb.io
@@ -115,7 +115,7 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   creationTimestamp: null
-  name: {{ .Values.finetuneExperimentController.namespace }}-validating-webhook-configuration
+  name: {{ .Release.Namespace }}-validating-webhook-configuration
   labels:
     datatunerx.io/part-of: datatunerx
   annotations:
@@ -127,7 +127,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /validate-extension-datatunerx-io-v1beta1-dataset
   failurePolicy: Fail
   name: vdataset.kb.io
@@ -147,7 +147,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /validate-finetune-datatunerx-io-v1beta1-finetuneexperiment
   failurePolicy: Fail
   name: vfinetuneexperiment.kb.io
@@ -167,7 +167,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /validate-finetune-datatunerx-io-v1beta1-finetunejob
   failurePolicy: Fail
   name: vfinetunejob.kb.io
@@ -187,7 +187,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /validate-core-datatunerx-io-v1beta1-hyperparameter
   failurePolicy: Fail
   name: vhyperparameter.kb.io
@@ -207,7 +207,7 @@ webhooks:
   clientConfig:
     service:
       name: {{ .Values.finetuneExperimentController.service.name }}
-      namespace: {{ .Values.finetuneExperimentController.namespace }}
+      namespace: {{ .Release.Namespace }}
       path: /validate-core-datatunerx-io-v1beta1-llm
   failurePolicy: Fail
   name: vllm.kb.io
